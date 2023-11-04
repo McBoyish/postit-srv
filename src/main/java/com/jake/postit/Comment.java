@@ -1,7 +1,9 @@
 package com.jake.postit;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
+@Table("comment")
 public class Comment {
     @Id
     private Integer id;

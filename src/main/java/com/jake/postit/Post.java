@@ -1,7 +1,9 @@
 package com.jake.postit;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
+@Table("post")
 public class Post {
     public Post(String title, String content, String imgUrl) {
         this.setTitle(title);

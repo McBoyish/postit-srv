@@ -1,6 +1,7 @@
 package com.jake.postit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,14 +17,26 @@ public class CommentController {
     CommentRepository comments;
 
     @PostMapping("/comment/save")
-    public void saveComment(@RequestBody Comment comment) {
-        comments.save(comment);
+    public Comment saveComment(@RequestBody Comment comment) {
+        return comments.save(comment);
     }
 
     @PostMapping("/comment/find-all-by-post-id")
-    public List<Comment> findComments(@PathVariable Integer postId, @RequestParam Integer page) {
-        Pageable p = PageRequest.of(page, 20, Sort.by("id").descending());
-        return comments.findAllByPostId(postId, p);
+    public Iterable<Comment> findComments(@RequestBody CommentFindAllByPostIdRequestBody body) {
+        if (body.cursor == null) {
+            return comments.findAllByPostIdNoCursor((body.postId));
+        }
+        return comments.findAllByPostId(body.postId, body.cursor);
     }
+}
 
+class CommentFindAllByPostIdRequestBody {
+    public CommentFindAllByPostIdRequestBody(Integer postId, Integer cursor) {
+        this.postId = postId;
+        this.cursor = cursor;
+    }
+    public Integer postId;
+    public Integer cursor;
+
+    public Integer limit;
 }
